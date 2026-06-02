@@ -2,14 +2,12 @@ import type { SearchResult, SourceSearchContext } from "../types"
 import { deriveAccessStatus, normalizeLicense } from "../utils/access"
 import { normalizeDoi } from "../utils/doi"
 
-const BASE_URL = "https://doaj.org/api"
-
 export async function searchDoaj(context: SourceSearchContext): Promise<SearchResult[]> {
   const params = new URLSearchParams({
     page: "1",
     pageSize: String(Math.min(context.limit, 50))
   })
-  const response = await fetch(`${BASE_URL}/search/articles/${encodeURIComponent(context.query)}?${params.toString()}`, {
+  const response = await fetch(`${context.baseUrl.replace(/\/$/, "")}/search/articles/${encodeURIComponent(context.query)}?${params.toString()}`, {
     signal: AbortSignal.timeout(context.timeoutMs)
   })
   if (!response.ok) throw new Error(`DOAJ API error: ${response.status}`)

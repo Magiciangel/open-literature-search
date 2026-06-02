@@ -2,8 +2,6 @@ import type { SearchResult, SourceSearchContext } from "../types"
 import { normalizeDoi } from "../utils/doi"
 import { getAllTags, getFirstTag, getTagBlocks } from "../utils/xml"
 
-const BASE_URL = "https://eutils.ncbi.nlm.nih.gov/entrez/eutils"
-
 export async function searchPubMed(context: SourceSearchContext): Promise<SearchResult[]> {
   const term = buildPubMedTerm(context)
   if (!term) return []
@@ -14,7 +12,8 @@ export async function searchPubMed(context: SourceSearchContext): Promise<Search
     retmode: "json",
     retmax: String(Math.min(context.limit, 50))
   })
-  const searchResponse = await fetch(`${BASE_URL}/esearch.fcgi?${searchParams.toString()}`, {
+  if (context.apiKey) searchParams.set("api_key", context.apiKey)
+  const searchResponse = await fetch(`${context.baseUrl.replace(/\/$/, "")}/esearch.fcgi?${searchParams.toString()}`, {
     signal: AbortSignal.timeout(context.timeoutMs)
   })
   if (!searchResponse.ok) throw new Error(`PubMed esearch error: ${searchResponse.status}`)
@@ -28,7 +27,8 @@ export async function searchPubMed(context: SourceSearchContext): Promise<Search
     id: ids.join(","),
     retmode: "xml"
   })
-  const fetchResponse = await fetch(`${BASE_URL}/efetch.fcgi?${fetchParams.toString()}`, {
+  if (context.apiKey) fetchParams.set("api_key", context.apiKey)
+  const fetchResponse = await fetch(`${context.baseUrl.replace(/\/$/, "")}/efetch.fcgi?${fetchParams.toString()}`, {
     signal: AbortSignal.timeout(context.timeoutMs)
   })
   if (!fetchResponse.ok) throw new Error(`PubMed efetch error: ${fetchResponse.status}`)

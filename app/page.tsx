@@ -1,16 +1,13 @@
 "use client"
 
 import { useMemo, useState } from "react"
+import Link from "next/link"
 import { SEARCH_SOURCES, type LiteratureSearchResult, type LiteratureSort, type SearchSource } from "../src/types"
+import { SOURCE_METADATA } from "../src/sources/metadata"
 
-const SOURCE_LABELS: Record<SearchSource, string> = {
-  openalex: "OpenAlex",
-  crossref: "Crossref",
-  "semantic-scholar": "Semantic Scholar",
-  arxiv: "arXiv",
-  pubmed: "PubMed",
-  doaj: "DOAJ"
-}
+const SOURCE_LABELS = Object.fromEntries(
+  SEARCH_SOURCES.map((source) => [source, SOURCE_METADATA[source].label])
+) as Record<SearchSource, string>
 
 const SAMPLE_QUERIES = [
   "AI feedback in academic writing",
@@ -90,6 +87,7 @@ export default function HomePage() {
           <div>
             <p className="eyebrow">Open-source academic search SaaS</p>
             <h1>Open Literature Search</h1>
+            <Link className="settingsLink" href="/settings/sources">Source settings</Link>
           </div>
         </div>
 

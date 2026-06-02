@@ -2,8 +2,6 @@ import type { SearchResult, SourceSearchContext } from "../types"
 import { deriveAccessStatus, normalizeLicense } from "../utils/access"
 import { normalizeDoi } from "../utils/doi"
 
-const BASE_URL = "https://api.openalex.org"
-
 export async function searchOpenAlex(context: SourceSearchContext): Promise<SearchResult[]> {
   const select = [
     "id",
@@ -32,7 +30,7 @@ export async function searchOpenAlex(context: SourceSearchContext): Promise<Sear
   })
   if (filters) params.set("filter", filters)
 
-  const response = await fetch(`${BASE_URL}/works?${params.toString()}`, {
+  const response = await fetch(`${context.baseUrl.replace(/\/$/, "")}/works?${params.toString()}`, {
     headers: { "User-Agent": "open-literature-search/0.1.0" },
     signal: AbortSignal.timeout(context.timeoutMs)
   })

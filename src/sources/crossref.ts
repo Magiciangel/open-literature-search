@@ -1,8 +1,6 @@
 import type { SearchResult, SourceSearchContext } from "../types"
 import { normalizeDoi } from "../utils/doi"
 
-const BASE_URL = "https://api.crossref.org"
-
 export async function searchCrossref(context: SourceSearchContext): Promise<SearchResult[]> {
   const params = new URLSearchParams({
     query: context.query,
@@ -16,7 +14,7 @@ export async function searchCrossref(context: SourceSearchContext): Promise<Sear
   ].filter(Boolean).join(",")
   if (filters) params.set("filter", filters)
 
-  const response = await fetch(`${BASE_URL}/works?${params.toString()}`, {
+  const response = await fetch(`${context.baseUrl.replace(/\/$/, "")}/works?${params.toString()}`, {
     signal: AbortSignal.timeout(context.timeoutMs)
   })
   if (!response.ok) throw new Error(`Crossref API error: ${response.status}`)

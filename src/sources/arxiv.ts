@@ -2,8 +2,6 @@ import type { SearchResult, SourceSearchContext } from "../types"
 import { normalizeDoi } from "../utils/doi"
 import { getAllTags, getFirstTag, getTagBlocks } from "../utils/xml"
 
-const BASE_URL = "https://export.arxiv.org/api"
-
 export async function searchArxiv(context: SourceSearchContext): Promise<SearchResult[]> {
   const params = new URLSearchParams({
     search_query: `all:"${context.query.replace(/"/g, " ")}"`,
@@ -13,7 +11,7 @@ export async function searchArxiv(context: SourceSearchContext): Promise<SearchR
     sortOrder: "descending"
   })
 
-  const response = await fetch(`${BASE_URL}/query?${params.toString()}`, {
+  const response = await fetch(`${context.baseUrl.replace(/\/$/, "")}/query?${params.toString()}`, {
     headers: { "User-Agent": "open-literature-search/0.1.0" },
     signal: AbortSignal.timeout(context.timeoutMs)
   })

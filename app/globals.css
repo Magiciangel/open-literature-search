@@ -77,6 +77,15 @@ button {
   margin-bottom: 28px;
 }
 
+.settingsLink {
+  color: var(--accent-strong);
+  display: inline-block;
+  font-size: 13px;
+  font-weight: 800;
+  margin-top: 8px;
+  text-decoration: none;
+}
+
 .brandMark {
   width: 48px;
   height: 48px;
@@ -424,6 +433,117 @@ pre {
   padding: 12px;
 }
 
+.settingsShell {
+  max-width: 1180px;
+  margin: 0 auto;
+  padding: 24px;
+}
+
+.settingsHeader,
+.settingsIntro,
+.sourceSettingsCard {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 8px;
+}
+
+.settingsHeader {
+  align-items: flex-start;
+  display: flex;
+  gap: 24px;
+  justify-content: space-between;
+  margin-bottom: 18px;
+  padding: 24px;
+}
+
+.settingsHeader h1 {
+  margin-bottom: 8px;
+}
+
+.settingsHeader p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.55;
+  margin-bottom: 0;
+  max-width: 720px;
+}
+
+.settingsHeader a {
+  border: 1px solid var(--line);
+  border-radius: 8px;
+  color: var(--accent-strong);
+  flex: 0 0 auto;
+  font-weight: 800;
+  padding: 10px 12px;
+  text-decoration: none;
+}
+
+.settingsIntro {
+  margin-bottom: 18px;
+  padding: 20px;
+}
+
+.settingsIntro h2 {
+  font-size: 18px;
+  margin-bottom: 12px;
+}
+
+.sourceSettingsGrid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.sourceSettingsCard {
+  padding: 18px;
+}
+
+.sourceSettingsTop {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.sourceSettingsTop h2 {
+  font-size: 18px;
+}
+
+.enabledBadge,
+.disabledBadge {
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 800;
+  padding: 5px 9px;
+}
+
+.enabledBadge {
+  background: #e8f3ee;
+  color: var(--accent-strong);
+}
+
+.disabledBadge {
+  background: #fff0f2;
+  color: var(--rose);
+}
+
+dl {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+dt {
+  color: var(--muted);
+  font-size: 12px;
+  font-weight: 800;
+}
+
+dd {
+  margin: 3px 0 0;
+  overflow-wrap: anywhere;
+}
+
 @media (max-width: 900px) {
   .shell {
     grid-template-columns: 1fr;
@@ -442,7 +562,12 @@ pre {
 
   .sourceMap,
   .sourceGrid,
-  .controlGrid {
+  .controlGrid,
+  .sourceSettingsGrid {
     grid-template-columns: 1fr;
+  }
+
+  .settingsHeader {
+    flex-direction: column;
   }
 }

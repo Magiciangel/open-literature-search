@@ -4,7 +4,9 @@ export const SEARCH_SOURCES = [
   "semantic-scholar",
   "arxiv",
   "pubmed",
-  "doaj"
+  "doaj",
+  "europepmc",
+  "core"
 ] as const
 
 export type SearchSource = typeof SEARCH_SOURCES[number]
@@ -24,6 +26,7 @@ export interface LiteratureSearchOptions {
   timeoutMs?: number
   enrichWithUnpaywall?: boolean
   unpaywallEmail?: string
+  sourceConfigs?: SourceRuntimeConfig[]
 }
 
 export interface SourceStatus {
@@ -62,6 +65,8 @@ export interface LiteratureSearchResult {
 export interface SourceSearchContext {
   query: string
   limit: number
+  baseUrl: string
+  apiKey?: string
   year?: number
   yearFrom?: number
   yearTo?: number
@@ -70,3 +75,27 @@ export interface SourceSearchContext {
 }
 
 export type SourceSearch = (context: SourceSearchContext) => Promise<SearchResult[]>
+
+export interface SourceRuntimeConfig {
+  source: SearchSource
+  label: string
+  enabled: boolean
+  baseUrl: string
+  requiresApiKey: boolean
+  apiKey?: string
+  apiKeyEnv?: string
+  baseUrlEnv: string
+  enabledEnv: string
+}
+
+export interface SourcePublicConfig {
+  source: SearchSource
+  label: string
+  enabled: boolean
+  baseUrl: string
+  requiresApiKey: boolean
+  hasApiKey: boolean
+  apiKeyEnv?: string
+  baseUrlEnv: string
+  enabledEnv: string
+}

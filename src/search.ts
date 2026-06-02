@@ -1,11 +1,14 @@
 import { searchArxiv } from "./sources/arxiv"
 import { searchCrossref } from "./sources/crossref"
 import { searchDoaj } from "./sources/doaj"
+import { searchCore } from "./sources/core"
+import { searchEuropePmc } from "./sources/europepmc"
 import { searchOpenAlex } from "./sources/openalex"
 import { searchPubMed } from "./sources/pubmed"
 import { searchSemanticScholar } from "./sources/semantic-scholar"
 import { enrichWithUnpaywall } from "./sources/unpaywall"
-import { SEARCH_SOURCES, type LiteratureSearchOptions, type LiteratureSearchResult, type SearchResult, type SearchSource, type SourceSearch, type SourceStatus } from "./types"
+import { getSourceConfigs } from "./config/sources"
+import { type LiteratureSearchOptions, type LiteratureSearchResult, type SearchResult, type SearchSource, type SourceRuntimeConfig, type SourceSearch, type SourceStatus } from "./types"
 import { hasOpenAccessSignal } from "./utils/access"
 import { dedupeResults } from "./utils/dedupe"
 import { rankResults } from "./utils/rank"
@@ -17,7 +20,9 @@ const SOURCE_SEARCHERS: Record<SearchSource, SourceSearch> = {
   "semantic-scholar": searchSemanticScholar,
   arxiv: searchArxiv,
   pubmed: searchPubMed,
-  doaj: searchDoaj
+  doaj: searchDoaj,
+  europepmc: searchEuropePmc,
+  core: searchCore
 }
 
 export async function searchLiterature(query: string, options: LiteratureSearchOptions = {}): Promise<LiteratureSearchResult> {
@@ -26,24 +31,26 @@ export async function searchLiterature(query: string, options: LiteratureSearchO
 
   const limit = clamp(options.limit || 10, 1, 50)
   const timeoutMs = options.timeoutMs || 12_000
-  const sources = normalizeSources(options.sources)
+  const sourceConfigs = normalizeSourceConfigs(options.sourceConfigs || getSourceConfigs(), options.sources)
   const providerLimit = Math.min(50, Math.max(limit * 2, 20))
 
-  const sourceRuns = await Promise.allSettled(sources.map(async (source) => {
-    const results = await SOURCE_SEARCHERS[source]({
+  const sourceRuns = await Promise.allSettled(sourceConfigs.map(async (config) => {
+    const results = await SOURCE_SEARCHERS[config.source]({
       query: normalizedQuery,
       limit: providerLimit,
+      baseUrl: config.baseUrl,
+      apiKey: config.apiKey,
       year: options.year,
       yearFrom: options.yearFrom,
       yearTo: options.yearTo,
       onlyOpenAccess: options.onlyOpenAccess,
       timeoutMs
     })
-    return { source, results }
+    return { source: config.source, results }
   }))
 
   const statuses: SourceStatus[] = sourceRuns.map((run, index) => {
-    const source = sources[index]
+    const source = sourceConfigs[index].source
     if (run.status === "fulfilled") return { source, status: "ok", count: run.value.results.length }
     return { source, status: "failed", count: 0, error: run.reason instanceof Error ? run.reason.message : String(run.reason) }
   })
@@ -69,10 +76,14 @@ async function enrichResults(results: SearchResult[], email?: string, timeoutMs?
   return Promise.all(results.map((result) => enrichWithUnpaywall(result, email, timeoutMs)))
 }
 
-function normalizeSources(sources?: SearchSource[]): SearchSource[] {
-  if (!sources?.length) return [...SEARCH_SOURCES]
-  const allowed = new Set<SearchSource>(SEARCH_SOURCES)
-  return Array.from(new Set(sources)).filter((source) => allowed.has(source))
+function normalizeSourceConfigs(configs: SourceRuntimeConfig[], sources?: SearchSource[]): SourceRuntimeConfig[] {
+  const selected = sources?.length ? new Set(sources) : null
+  const available = configs.filter((config) => {
+    if (!config.enabled) return false
+    if (config.requiresApiKey && !config.apiKey) return false
+    return selected ? selected.has(config.source) : true
+  })
+  return available.length ? available : configs.filter((config) => config.enabled && !config.requiresApiKey)
 }
 
 function clamp(value: number, min: number, max: number): number {

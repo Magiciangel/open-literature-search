@@ -1,8 +1,6 @@
 import type { SearchResult, SourceSearchContext } from "../types"
 import { normalizeDoi } from "../utils/doi"
 
-const BASE_URL = "https://api.semanticscholar.org"
-
 export async function searchSemanticScholar(context: SourceSearchContext): Promise<SearchResult[]> {
   const params = new URLSearchParams({
     query: context.query,
@@ -14,7 +12,8 @@ export async function searchSemanticScholar(context: SourceSearchContext): Promi
     params.set("year", `${context.yearFrom || ""}-${context.yearTo || ""}`)
   }
 
-  const response = await fetch(`${BASE_URL}/graph/v1/paper/search?${params.toString()}`, {
+  const response = await fetch(`${context.baseUrl.replace(/\/$/, "")}/graph/v1/paper/search?${params.toString()}`, {
+    headers: context.apiKey ? { "x-api-key": context.apiKey } : undefined,
     signal: AbortSignal.timeout(context.timeoutMs)
   })
   if (!response.ok) throw new Error(`Semantic Scholar API error: ${response.status}`)
