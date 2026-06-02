@@ -9,6 +9,7 @@ import { SEARCH_SOURCES, type LiteratureSearchOptions, type LiteratureSearchResu
 import { hasOpenAccessSignal } from "./utils/access"
 import { dedupeResults } from "./utils/dedupe"
 import { rankResults } from "./utils/rank"
+import { cleanSearchResult } from "./utils/text"
 
 const SOURCE_SEARCHERS: Record<SearchSource, SourceSearch> = {
   openalex: searchOpenAlex,
@@ -47,7 +48,9 @@ export async function searchLiterature(query: string, options: LiteratureSearchO
     return { source, status: "failed", count: 0, error: run.reason instanceof Error ? run.reason.message : String(run.reason) }
   })
 
-  const combined = sourceRuns.flatMap((run) => run.status === "fulfilled" ? run.value.results : [])
+  const combined = sourceRuns
+    .flatMap((run) => run.status === "fulfilled" ? run.value.results : [])
+    .map(cleanSearchResult)
   const deduped = dedupeResults(combined)
   const filtered = options.onlyOpenAccess ? deduped.filter(hasOpenAccessSignal) : deduped
   const enriched = options.enrichWithUnpaywall === false
