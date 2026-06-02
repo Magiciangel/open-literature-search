@@ -1,0 +1,48 @@
+{
+  "name": "open-literature-search-saas",
+  "version": "0.1.0",
+  "description": "An open-source SaaS for natural-language academic literature search across open scholarly sources.",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "start": "next start"
+  },
+  "keywords": [
+    "academic-search",
+    "literature-search",
+    "openalex",
+    "crossref",
+    "semantic-scholar",
+    "arxiv",
+    "pubmed",
+    "doaj",
+    "unpaywall",
+    "typescript",
+    "saas",
+    "nextjs"
+  ],
+  "author": "Zeke",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18"
+  },
+  "dependencies": {
+    "next": "^15.5.7",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.14.10",
+    "@types/react": "^19.2.7",
+    "@types/react-dom": "^19.2.3",
+    "typescript": "^5.5.3",
+    "vitest": "^4.1.8"
+  },
+  "overrides": {
+    "postcss": "^8.5.10"
+  }
+}
