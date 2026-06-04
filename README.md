@@ -1,8 +1,27 @@
 # Open Literature Search
 
+[![CI](https://github.com/Magiciangel/open-literature-search/actions/workflows/ci.yml/badge.svg)](https://github.com/Magiciangel/open-literature-search/actions/workflows/ci.yml)
+[![Release](https://img.shields.io/github/v/release/Magiciangel/open-literature-search)](https://github.com/Magiciangel/open-literature-search/releases)
+[![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](./LICENSE)
+
 Open Literature Search is an open-source SaaS for natural-language academic literature search across open scholarly sources.
 
 It lets users search OpenAlex, Crossref, Semantic Scholar, arXiv, PubMed, DOAJ, Europe PMC, and CORE from one web interface. Results are normalized into one structure, merged by DOI/title, ranked by relevance, and enriched with open-access signals from Unpaywall when DOI data is available.
+
+![Search results screenshot](./public/screenshots/search-results.png)
+
+## Quick Start
+
+```bash
+npm install
+npm run dev
+```
+
+Open:
+
+```txt
+http://localhost:3000
+```
 
 ## What It Does
 
@@ -41,6 +60,47 @@ npm test
 npm run typecheck
 npm run build
 ```
+
+Or run the combined CI command locally:
+
+```bash
+npm run ci
+```
+
+## Deploy
+
+### Vercel
+
+The fastest path is Vercel:
+
+1. Import `Magiciangel/open-literature-search` into Vercel.
+2. Set optional environment variables such as `UNPAYWALL_EMAIL`, `SEMANTIC_SCHOLAR_API_KEY`, or `CORE_API_KEY`.
+3. Deploy.
+
+[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/Magiciangel/open-literature-search)
+
+### Docker
+
+Build and run:
+
+```bash
+docker build -t open-literature-search .
+docker run --rm -p 3000:3000 --env-file .env.local open-literature-search
+```
+
+If you do not need API keys yet:
+
+```bash
+docker run --rm -p 3000:3000 open-literature-search
+```
+
+### Docker Compose
+
+```bash
+docker compose up --build
+```
+
+Open `http://localhost:3000`.
 
 ## Environment
 
@@ -94,10 +154,13 @@ The adapter receives `baseUrl`, `apiKey`, query text, year filters, timeout, and
 ## Project Structure
 
 ```txt
+.github/
+  workflows/ci.yml      # GitHub Actions verification
 app/
   api/search/route.ts   # SaaS search API
   settings/sources/     # Source configuration view
   page.tsx              # English web search interface
+public/screenshots/     # README screenshots
 src/
   config/sources.ts     # Env-driven source configuration
   search.ts             # Search pipeline
@@ -105,6 +168,14 @@ src/
   utils/                # DOI, access, dedupe, ranking helpers
 test/                   # Core unit tests
 ```
+
+## Contributing
+
+See [CONTRIBUTING.md](./CONTRIBUTING.md).
+
+## Security
+
+See [SECURITY.md](./SECURITY.md).
 
 ## Original Author And License
 

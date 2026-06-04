@@ -1,6 +1,6 @@
 {
   "name": "open-literature-search-saas",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "An open-source SaaS for natural-language academic literature search across open scholarly sources.",
   "type": "module",
   "scripts": {
@@ -8,6 +8,7 @@
     "build": "next build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
+    "ci": "npm test && npm run typecheck && npm run build",
     "test:watch": "vitest",
     "start": "next start"
   },
