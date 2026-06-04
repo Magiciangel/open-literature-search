@@ -8,6 +8,30 @@ Open Literature Search is an open-source SaaS for natural-language academic lite
 
 It lets users search OpenAlex, Crossref, Semantic Scholar, arXiv, PubMed, DOAJ, Europe PMC, and CORE from one web interface. Results are normalized into one structure, merged by DOI/title, ranked by relevance, and enriched with open-access signals from Unpaywall when DOI data is available.
 
+## Open-source Software
+
+This repository is open-source software released under the MIT License.
+
+Original author: **Zeke**
+
+Anyone may use, copy, modify, merge, publish, distribute, sublicense, or sell copies of this software, as long as the original copyright notice and MIT License text are preserved.
+
+## Current Release
+
+Latest release: [v0.2.0 - Deployable Open Source Release](https://github.com/Magiciangel/open-literature-search/releases/tag/v0.2.0)
+
+v0.2.0 focuses on making the project easier to deploy, verify, and contribute to:
+
+- GitHub Actions CI for tests, typecheck, and production build
+- Dockerfile and Docker Compose support
+- Vercel deployment instructions and deploy button
+- README screenshots
+- Source settings page
+- Configurable source registry
+- Issue templates and pull request template
+- CONTRIBUTING.md and SECURITY.md
+- Local `npm run ci` command
+
 ![Search results screenshot](./public/screenshots/search-results.png)
 
 ## Quick Start
