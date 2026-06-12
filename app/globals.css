@@ -278,6 +278,7 @@ legend {
   padding: 4px;
   background: #eef2ef;
   border-radius: 8px;
+  flex-wrap: wrap;
 }
 
 .segmented button {
@@ -392,13 +393,16 @@ legend {
   margin-top: 12px;
 }
 
-.links a {
+.links a,
+.links button {
+  background: #fff;
   color: var(--accent-strong);
   border: 1px solid var(--line);
   border-radius: 8px;
   padding: 8px 10px;
   text-decoration: none;
   font-weight: 800;
+  min-height: 38px;
 }
 
 .outputBlock {

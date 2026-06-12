@@ -4,6 +4,7 @@ import { useMemo, useState } from "react"
 import Link from "next/link"
 import { SEARCH_SOURCES, type LiteratureSearchResult, type LiteratureSort, type SearchSource } from "../src/types"
 import { SOURCE_METADATA } from "../src/sources/metadata"
+import { formatPaperCitation, formatResultsBibtex, formatResultsMarkdown, formatResultsRis } from "../src/format"
 
 const SOURCE_LABELS = Object.fromEntries(
   SEARCH_SOURCES.map((source) => [source, SOURCE_METADATA[source].label])
@@ -26,9 +27,11 @@ export default function HomePage() {
   const [result, setResult] = useState<LiteratureSearchResult | null>(null)
   const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const [outputMode, setOutputMode] = useState<"results" | "markdown" | "json">("results")
+  const [outputMode, setOutputMode] = useState<"results" | "markdown" | "bibtex" | "ris" | "json">("results")
 
-  const markdown = useMemo(() => result ? formatMarkdown(result) : "", [result])
+  const markdown = useMemo(() => result ? formatResultsMarkdown(result) : "", [result])
+  const bibtex = useMemo(() => result ? formatResultsBibtex(result) : "", [result])
+  const ris = useMemo(() => result ? formatResultsRis(result) : "", [result])
 
   async function submitSearch(event?: React.FormEvent) {
     event?.preventDefault()
@@ -71,8 +74,13 @@ export default function HomePage() {
 
   async function copyOutput() {
     if (!result) return
-    const value = outputMode === "json" ? JSON.stringify(result, null, 2) : markdown
+    const value = formatOutput(result, outputMode, markdown, bibtex, ris)
     await navigator.clipboard.writeText(value)
+  }
+
+  async function copyCitation(index: number) {
+    if (!result) return
+    await navigator.clipboard.writeText(formatPaperCitation(result.results[index]))
   }
 
   return (
@@ -167,6 +175,8 @@ export default function HomePage() {
           <div className="segmented">
             <button className={outputMode === "results" ? "active" : ""} onClick={() => setOutputMode("results")}>Results</button>
             <button className={outputMode === "markdown" ? "active" : ""} onClick={() => setOutputMode("markdown")} disabled={!result}>Markdown</button>
+            <button className={outputMode === "bibtex" ? "active" : ""} onClick={() => setOutputMode("bibtex")} disabled={!result}>BibTeX</button>
+            <button className={outputMode === "ris" ? "active" : ""} onClick={() => setOutputMode("ris")} disabled={!result}>RIS</button>
             <button className={outputMode === "json" ? "active" : ""} onClick={() => setOutputMode("json")} disabled={!result}>JSON</button>
           </div>
         </div>
@@ -207,6 +217,7 @@ export default function HomePage() {
                     {paper.doi ? <a href={`https://doi.org/${paper.doi}`} target="_blank" rel="noreferrer">DOI</a> : null}
                     {paper.url ? <a href={paper.url} target="_blank" rel="noreferrer">Landing page</a> : null}
                     {paper.oaPdfUrl ? <a href={paper.oaPdfUrl} target="_blank" rel="noreferrer">Open PDF</a> : null}
+                    <button type="button" onClick={() => copyCitation(index)}>Copy citation</button>
                   </div>
                 </article>
               ))}
@@ -217,7 +228,7 @@ export default function HomePage() {
         {result && outputMode !== "results" ? (
           <div className="outputBlock">
             <button type="button" onClick={copyOutput}>Copy</button>
-            <pre>{outputMode === "json" ? JSON.stringify(result, null, 2) : markdown}</pre>
+            <pre>{formatOutput(result, outputMode, markdown, bibtex, ris)}</pre>
           </div>
         ) : null}
       </section>
@@ -225,21 +236,15 @@ export default function HomePage() {
   )
 }
 
-function formatMarkdown(result: LiteratureSearchResult): string {
-  if (!result.results.length) return "No results found."
-  return result.results.map((paper, index) => {
-    const meta = [paper.year, paper.venue, paper.source].filter(Boolean).join(" · ")
-    const links = [
-      paper.doi ? `DOI: https://doi.org/${paper.doi}` : null,
-      paper.url ? `URL: ${paper.url}` : null,
-      paper.oaPdfUrl ? `Open PDF: ${paper.oaPdfUrl}` : null
-    ].filter(Boolean)
-    return [
-      `### ${index + 1}. ${paper.title}`,
-      paper.authors.join(", ") || "Unknown authors",
-      meta,
-      `Citations: ${paper.citedByCount}`,
-      ...links
-    ].filter(Boolean).join("\n")
-  }).join("\n\n")
+function formatOutput(
+  result: LiteratureSearchResult,
+  outputMode: "results" | "markdown" | "bibtex" | "ris" | "json",
+  markdown: string,
+  bibtex: string,
+  ris: string
+): string {
+  if (outputMode === "json") return JSON.stringify(result, null, 2)
+  if (outputMode === "bibtex") return bibtex
+  if (outputMode === "ris") return ris
+  return markdown
 }

@@ -18,7 +18,15 @@ Anyone may use, copy, modify, merge, publish, distribute, sublicense, or sell co
 
 ## Current Release
 
-Latest release: [v0.2.0 - Deployable Open Source Release](https://github.com/Magiciangel/open-literature-search/releases/tag/v0.2.0)
+Latest release: [v0.3.0 - Academic Export Release](https://github.com/Magiciangel/open-literature-search/releases/tag/v0.3.0)
+
+v0.3.0 focuses on making search results easier to reuse in academic workflows:
+
+- BibTeX export
+- RIS export
+- Plain citation copy for individual papers
+- Shared export formatter utilities
+- Export formatter tests
 
 v0.2.0 focuses on making the project easier to deploy, verify, and contribute to:
 
@@ -58,6 +66,8 @@ http://localhost:3000
 - DOI/title deduplication
 - Relevance, year, citation count, and open-access-first sorting
 - JSON and Markdown result views
+- BibTeX and RIS export views
+- One-click citation copy per result
 - MIT-licensed open-source code
 
 ## What It Does Not Do

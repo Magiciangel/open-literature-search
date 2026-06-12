@@ -1,5 +1,5 @@
 export { searchLiterature } from "./search"
-export { formatResultsMarkdown } from "./format"
+export { formatPaperCitation, formatResultsBibtex, formatResultsMarkdown, formatResultsRis } from "./format"
 export type {
   AccessStatus,
   LiteratureSearchOptions,

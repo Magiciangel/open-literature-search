@@ -1,6 +1,6 @@
 {
   "name": "open-literature-search-saas",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "An open-source SaaS for natural-language academic literature search across open scholarly sources.",
   "type": "module",
   "scripts": {
